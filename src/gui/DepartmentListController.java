@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import com.mysql.cj.util.Util;
 
 import application.Main;
+import gui.listeners.DataChangeListener;
 import gui.util.Alerts;
 import gui.util.Utils;
 import javafx.collections.FXCollections;
@@ -28,7 +29,7 @@ import javafx.stage.Stage;
 import model.entities.Department;
 import model.service.DepartmentServices;
 
-public class DepartmentListController implements Initializable {
+public class DepartmentListController implements Initializable, DataChangeListener {
    private DepartmentServices services;
 	
 	@FXML 
@@ -81,6 +82,7 @@ public class DepartmentListController implements Initializable {
 			Pane pane = loader.load();
 			DepartmentFormController controller = loader.getController();
 			controller.setDepartment(obj);
+			controller.subscribeDataChangeListener(this);
 			controller.updateFormData();
 			controller.setDepartmentService(new DepartmentServices());
 			
@@ -98,6 +100,11 @@ public class DepartmentListController implements Initializable {
 		} catch (IOException e) {
 			Alerts.showAlerts("IO exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
+	}
+
+	@Override
+	public void onDataChanged() {
+updateTableView();		
 	}
 
 }
