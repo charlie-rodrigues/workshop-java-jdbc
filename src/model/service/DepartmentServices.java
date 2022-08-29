@@ -19,4 +19,7 @@ public void saveOrUpdate(Department obj) {
 	}
 	
 }
+public void remove(Department obj) {
+	dao.deleteById(obj.getId());
+}
 }
