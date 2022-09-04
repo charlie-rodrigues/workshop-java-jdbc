@@ -1,9 +1,11 @@
 package gui;
 
 import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -114,9 +116,28 @@ public class SellerFormController implements Initializable {
 		ValidationException exception = new ValidationException("validation error");
 		obj.setId(Utils.tryParseToInt(txtID.getText()));
 		if (txtName.getText() == null || txtName.getText().trim().equals("")) {
-			exception.addError("name", "fild can not be empty!");
+			exception.addError("name", "field can not be empty!");
 		}
 		obj.setName(txtName.getText());
+		
+		if (txtEmail.getText() == null || txtEmail.getText().trim().equals("")) {
+			exception.addError("email", "field can not be empty!");
+		}
+		obj.setEmail(txtEmail.getText());
+		
+		if(dpBirthDate.getValue()==null) {
+			exception.addError("birthDate", "field can not be empty!");
+
+		}else {
+		Instant instant = Instant.from(dpBirthDate.getValue().atStartOfDay(ZoneId.systemDefault()));
+		obj.setBirthDate(Date.from(instant));
+		}
+		if (txtBaseSalary.getText() == null || txtBaseSalary.getText().trim().equals("")) {
+			exception.addError("baseSalary", "fild can not be empty!");
+		}
+		obj.setBaseSalary(Utils.tryParseToDouble(txtBaseSalary.getText()));
+		obj.setDepartment(comboboxDepartment.getValue());
+		
 		if (exception.getErrors().size() > 0) {
 			throw exception;
 		}
@@ -138,9 +159,9 @@ public class SellerFormController implements Initializable {
 	public void initializeNodes() {
 		Constraints.setTextFieldInteger(txtID);
 		Constraints.setTextFieldMaxLength(txtName, 70);
-		Constraints.setTextFieldDouble(txtBaseSalary);
 		Constraints.setTextFieldMaxLength(txtEmail, 60);
 		Utils.formatDatePicker(dpBirthDate, "dd/MM/yyyy");
+		Constraints.setTextFieldDouble(txtBaseSalary);
 		initializeComboBoxDepartment();
 
 	}
@@ -176,9 +197,11 @@ public class SellerFormController implements Initializable {
 
 	public void setErrorsMessage(Map<String, String> errors) {
 		Set<String> filds = errors.keySet();
-		if (filds.contains("name")) {
-			lblErrorName.setText(errors.get("name"));
-		}
+	lblErrorName.setText((filds.contains("name")?errors.get("name"):""));
+	lblErrorEmail.setText((filds.contains("email")?errors.get("email"):""));
+	lblErrorBirthDate.setText((filds.contains("birthDate")?errors.get("birthDate"):""));
+	lblErrorBaseSalary.setText((filds.contains("baseSalary")?errors.get("baseSalary"):""));
+
 	}
 
 	private void initializeComboBoxDepartment() {
